@@ -1,0 +1,55 @@
+version: '3.8'
+services:
+    app:
+        build:
+            context: ./
+            dockerfile: Dockerfile
+        container_name: skillville-app
+        restart: always
+        working_dir: /var/www
+        volumes:
+            - './:/var/www'
+    nginx:
+        image: 'nginx:1.19-alpine'
+        container_name: skillville-nginx
+        restart: always
+        ports:
+            - '80:80'
+        volumes:
+            - './nginx:/etc/nginx/conf.d'
+            - './:/var/www'
+    mysql:
+        image: 'mysql:8.0'
+        container_name: skillville-mysql
+        restart: always
+        environment:
+            MYSQL_DATABASE: laravel
+            MYSQL_ROOT_PASSWORD: secret
+        volumes:
+            - 'mysql-data:/var/lib/mysql'
+    phpmyadmin:
+        image: phpmyadmin/phpmyadmin
+        container_name: skillville-phpmyadmin
+        restart: always
+        ports:
+            - '8081:80'
+        environment:
+            PMA_HOST: mysql
+            PMA_USER: root
+            PMA_PASSWORD: secret
+        depends_on:
+            - mysql
+    redis-stack:
+        image: redis/redis-stack  # Use the latest Redis Stack image
+        container_name: skillville-redis-stack
+        restart: always
+        ports:
+            - '6379:6379'  # Map Redis port to host port 6379
+            - '8001:8001'
+        environment:
+            - REDIS_PASSWORD=${REDIS_PASSWORD}
+        volumes:
+            - 'redis-data:/data'
+volumes:
+    mysql-data: {  }
+    redis-data: { }
