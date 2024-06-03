@@ -16,11 +16,14 @@ return new class extends Migration
             $table->string('title');
             $table->string('description');
             $table->string('image_url');
+            $table->string('price');
             $table->unsignedBigInteger('category_id');
+            $table->unsignedBigInteger('author_id');
 
             $table->timestamps();
 
             $table->foreign('category_id')->references('id')->on('categories')->onDelete('cascade');
+            $table->foreign('author_id')->references('id')->on('users')->onDelete('cascade');
 
         });
     }
